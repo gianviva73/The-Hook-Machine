@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hook Machine | Digital Creator Lab</title>
+    <!-- Tailwind CSS per un design pulito e moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="w-full border-b border-slate-800 bg-slate-900/50 backdrop-blur py-4 px-6">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <h1 class="text-lg font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                DIGITAL CREATOR LAB
+            </h1>
+            <!-- Pulsante cliccabile per resettare la pagina -->
+            <button onclick="window.location.reload()" class="text-xs font-semibold px-3 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 hover:border-indigo-500/40 transition cursor-pointer">
+                🔄 The Hook Machine
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-xl w-full mx-auto p-6 my-auto">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold tracking-tight mb-2">Cattura l'attenzione in 3 secondi</h2>
+            <p class="text-slate-400 text-sm">Seleziona una categoria e genera hook ad alto impatto per i tuoi video brevi.</p>
+        </div>
+
+        <!-- Controlli -->
+        <div class="space-y-4 bg-slate-900/80 border border-slate-800/80 p-6 rounded-2xl shadow-xl">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Categoria Contenuto</label>
+                <select id="categorySelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
+                    <option value="curiosita">🔥 Curiosità & Shock Value</option>
+                    <option value="errore">❌ Errori da Evitare</option>
+                    <option value="segreto">🤫 Segreti / Metodo Proibito</option>
+                    <option value="veloce">⚡ Risultati Rapidi</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Argomento o Nicchia (Opzionale)</label>
+                <input type="text" id="topicInput" placeholder="Es. programmazione, mixology, fitness..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+
+            <button onclick="generateHook()" class="w-full bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg transition duration-200 transform active:scale-[0.99] cursor-pointer">
+                Genera Hook Virale 🚀
+            </button>
+        </div>
+
+        <!-- Risultato -->
+        <div id="resultBox" class="mt-6 hidden bg-slate-900 border border-indigo-500/30 p-6 rounded-2xl relative shadow-2xl">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 block mb-1">Il tuo gancio pronto all'uso:</span>
+            <p id="hookOutput" class="text-lg font-medium text-slate-100 mb-4"></p>
+            <button onclick="copyHook()" id="copyBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2.5 rounded-lg transition border border-slate-700 cursor-pointer">
+                📋 Copia Testo
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-slate-900 py-4 text-center text-xs text-slate-500">
+        Digital Creator Lab &bull; Strumenti per Creator Indipendenti
+    </footer>
+
+    <!-- Script di Generazione -->
+    <script>
+        const hooksData = {
+            curiosita: [
+                "Tutti stanno facendo questo errore con {topic}, e nessuno te lo sta dicendo.",
+                "Ho testato {topic} per 30 giorni consecutivi: ecco cosa è successo davvero.",
+                "Il 99% delle persone ignora questa regola fondamentale su {topic}.",
+                "Questa piccola modifica mi ha svoltato completamente l'approccio a {topic}."
+            ],
+            errore: [
+                "Smetti immediatamente di fare questo se ti interessa {topic}.",
+                "Ecco perché i tuoi sforzi in {topic} finora non hanno portato a nessun risultato.",
+                "I 3 errori madornali che ti stanno bloccando in {topic}.",
+                "Se fai ancora così con {topic}, stai buttando via il tuo tempo."
+            ],
+            segreto: [
+                "Il trucco segreto che i professionisti di {topic} non vorrebbero mai farti sapere.",
+                "Come ho fatto a sbloccare {topic} usando questo semplice metodo.",
+                "Il retroscena che nessuno ti racconta mai riguardo a {topic}.",
+                "Ecco il framework esatto che uso per gestire {topic} senza stress."
+            ],
+            veloce: [
+                "Come ottenere risultati concreti in {topic} partendo completamente da zero.",
+                "Il metodo definitivo per velocizzare {topic} in meno di un minuto.",
+                "Se hai poco tempo ma vuoi spaccare in {topic}, fai così.",
+                "La scorciatoia legale che nessuno usa per {topic}."
+            ]
+        };
+
+        function generateHook() {
+            const category = document.getElementById('categorySelect').value;
+            let topic = document.getElementById('topicInput').value.trim();
+            
+            if (!topic) {
+                topic = "questo settore";
+            }
+
+            const list = hooksData[category];
+            const randomIndex = Math.floor(Math.random() * list.length);
+            let selectedHook = list[randomIndex].replace('{topic}', topic);
+
+            const resultBox = document.getElementById('resultBox');
+            const hookOutput = document.getElementById('hookOutput');
+
+            hookOutput.textContent = selectedHook;
+            resultBox.classList.remove('hidden');
+        }
+
+        function copyHook() {
+            const text = document.getElementById('hookOutput').textContent;
+            navigator.clipboard.writeText(text);
+            const btn = document.getElementById('copyBtn');
+            btn.textContent = "✅ Copiato negli Appunti!";
+            btn.classList.add('bg-emerald-600', 'border-emerald-500');
+            setTimeout(() => {
+                btn.textContent = "📋 Copia Testo";
+                btn.classList.remove('bg-emerald-600', 'border-emerald-500');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
